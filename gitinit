@@ -1,0 +1,43 @@
+#!/bin/bash
+
+REPOSITORY_URL=""
+
+
+# $# = number of args passed to script
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1 #first command line arg
+
+case $key in
+
+-r|-repo|-repository)
+REPOSITORY_URL=$2
+shift           #moves command arg index
+shift
+;;
+
+-h|-help)
+echo "Usage gitinit [-r <repository>]"
+REPOSITORY_URL=""
+shift
+break
+;;
+
+*)
+shift
+;;
+
+esac
+
+done
+
+if [ -n "$REPOSITORY_URL" ] #if repo_url not null
+then
+git init
+git add -A
+git commit -m "Initial commit"
+git remote add origin $REPOSITORY_URL
+git push -u origin master
+fi
