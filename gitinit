@@ -1,7 +1,8 @@
 #!/bin/bash
 
 REPOSITORY_URL=""
-
+DESCRIPTION_STRING="Initialize a git repository using github remote url"
+USAGE_STRING="Usage gitinit [-r <repository>]"
 
 # $# = number of args passed to script
 
@@ -18,15 +19,18 @@ shift           #moves command arg index
 shift
 ;;
 
--h|-help)
-echo "Usage gitinit [-r <repository>]"
+-d|-desc|-description)
 REPOSITORY_URL=""
+printf "%s %s" "$DESCRIPTION_STRING" "$USAGE_STRING"
 shift
 break
 ;;
 
-*)
+-h|-help|*)
+echo "$USAGE_STRING"
+REPOSITORY_URL=""
 shift
+break
 ;;
 
 esac
@@ -36,6 +40,8 @@ done
 if [ -n "$REPOSITORY_URL" ] #if repo_url not null
 then
 git init
+touch .gitignore
+printf "%s\n\%s\n%s\n" "._.DS_Store" ".DS_Store" ".nfs*" > .gitignore
 git add -A
 git commit -m "Initial commit"
 git remote add origin $REPOSITORY_URL

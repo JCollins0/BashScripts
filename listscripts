@@ -1,0 +1,31 @@
+#!/bin/bash
+
+DESCRIPTION_STRING="Lists all custom scripts"
+USAGE_STRING="listscripts [-h] [-d]"
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1 #first command line arg
+
+case $key in
+
+-d|-desc|-description)
+printf "%s %s" "$DESCRIPTION_STRING" "$USAGE_STRING"
+shift
+break
+;;
+
+-h|-help)
+echo "$USAGE_STRING"
+REPOSITORY_URL=""
+shift
+break
+;;
+
+esac
+
+done
+
+SCRIPTS="$(ls -I *.MD ~/CustomScripts/)" #-1 makes new line
+echo  $SCRIPTS
