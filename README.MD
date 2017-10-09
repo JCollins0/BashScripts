@@ -1,1 +1,1 @@
-A repo for useful custom bash scripts
+A repository for useful custom bash scripts
