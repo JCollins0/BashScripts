@@ -1,0 +1,77 @@
+#!/bin/bash
+
+DESCRIPTION_STRING="Desc: Update programming log"
+USAGE_STRING="Usage: proglog [-h] [-d] -f <file> -s <start time> -n <names.txt>"
+HAS_ARGS=1
+
+NAMES_FILE=""
+START_TIME=0
+LOG_FILE=""
+
+NAMES=()
+NUM_NAMES=0
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1 #first command line arg
+
+case $key in
+
+-f|-file)
+LOG_FILE=$2
+shift
+shift
+;;
+
+-s|-start)
+START_TIME=$2
+shift
+shift
+;;
+
+-n|-names)
+NAMES_FILE=$2
+shift
+shift
+;;
+
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+HAS_ARGS=0
+shift
+break
+;;
+
+-h|-help|*)
+printf "%s\n" "$USAGE_STRING"
+HAS_ARGS=0
+shift
+break
+;;
+
+esac
+
+done
+
+if (($HAS_ARGS == 1))
+then
+  if [ -n "$NAMES_FILE" ] && [ -n "$LOG_FILE" ] && [ -n "$START_TIME" ]
+  then
+    counter=0
+    IFS=$'\n' read -d '' -r -a NAMES < "$NAMES_FILE"
+    NUM_NAMES=${#NAMES[@]}
+    HOUR="$(date +%H)"
+    ELAPSED_TIME=$(($HOUR-$START_TIME))
+    printf "%s %d - %d (%d hours)\n\n" "$(date +"%A %m/%d")" $START_TIME $HOUR $ELAPSED_TIME >> $LOG_FILE
+    PERSON_INDEX=$(($RANDOM % $NUM_NAMES))
+    echo "Driver Order and Time Length:" >> $LOG_FILE
+    for ((NUM=0; $NUM < $ELAPSED_TIME*2; NUM++))
+    do
+      echo "${NAMES[$PERSON_INDEX]}, 30 Minutes" >> $LOG_FILE
+      PERSON_INDEX=$(( ($PERSON_INDEX+1)%$NUM_NAMES))
+    done
+  else
+    printf "ERROR: %s\n" "$USAGE_STRING"
+  fi
+fi

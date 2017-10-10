@@ -1,7 +1,17 @@
 #!/bin/bash
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NO_COLOR='\033[0m'
 
-DESCRIPTION_STRING="Lists all custom scripts"
-USAGE_STRING="listscripts [-h] [-d]"
+
+DESCRIPTION_STRING="Desc: Lists all custom scripts"
+USAGE_STRING="Usage: listscripts [-h] [-d]"
+HAS_ARGS=0
+
+if (($# > 0))
+then
+HAS_ARGS=1
+fi
 
 while  [[ $# -gt 0 ]]
 do
@@ -11,14 +21,13 @@ key=$1 #first command line arg
 case $key in
 
 -d|-desc|-description)
-printf "%s %s" "$DESCRIPTION_STRING" "$USAGE_STRING"
+printf "%s\n" "$DESCRIPTION_STRING"
 shift
 break
 ;;
 
 -h|-help)
-echo "$USAGE_STRING"
-REPOSITORY_URL=""
+printf "%s\n" "$USAGE_STRING"
 shift
 break
 ;;
@@ -27,5 +36,15 @@ esac
 
 done
 
-SCRIPTS="$(ls -I *.MD ~/CustomScripts/)" #-1 makes new line
-echo  $SCRIPTS
+if (($HAS_ARGS == 0))
+then
+ printf "%s\n" "------------------------------------------------------------------"
+ printf "%s\n" "|                         Custom Scripts                         |"
+ printf "%s\n" "------------------------------------------------------------------"
+
+ SCRIPTS="$(ls -I *.MD -I *.txt ~/CustomScripts/)" #-1 makes new line
+ for program in $SCRIPTS
+ do
+   printf "${GREEN}%s${NO_COLOR}\n\t%s\n\t%s\n" "·$program" "$($program -description)" "$($program -help)"
+ done
+fi

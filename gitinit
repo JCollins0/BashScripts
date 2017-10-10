@@ -1,8 +1,8 @@
 #!/bin/bash
 
 REPOSITORY_URL=""
-DESCRIPTION_STRING="Initialize a git repository using github remote url"
-USAGE_STRING="Usage gitinit [-r <repository>]"
+DESCRIPTION_STRING="Desc: Initialize a git repository using github remote url"
+USAGE_STRING="Usage: gitinit [-r <repository>]"
 
 # $# = number of args passed to script
 
@@ -21,13 +21,13 @@ shift
 
 -d|-desc|-description)
 REPOSITORY_URL=""
-printf "%s %s" "$DESCRIPTION_STRING" "$USAGE_STRING"
+printf "%s\n" "$DESCRIPTION_STRING"
 shift
 break
 ;;
 
 -h|-help|*)
-echo "$USAGE_STRING"
+printf "%s\n" "$USAGE_STRING"
 REPOSITORY_URL=""
 shift
 break
