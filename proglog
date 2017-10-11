@@ -1,15 +1,44 @@
 #!/bin/bash
 
 DESCRIPTION_STRING="Desc: Update programming log"
-USAGE_STRING="Usage: proglog [-h] [-d] -f <file> -s <start time> -n <names.txt>"
+USAGE_STRING="Usage: proglog -f <file> -s <start time (24hr)> -n <names.txt> [-h] [-d]"
 HAS_ARGS=1
 
 NAMES_FILE=""
 START_TIME=0
+ELAPSED_TIME=0
 LOG_FILE=""
 
 NAMES=()
 NUM_NAMES=0
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NO_COLOR='\033[0m'
+
+function convertTime() {
+  local acthour=$1
+  local hour=$(($acthour % 12))
+
+  if [[ $acthour -gt 12 ]]; then
+    if (($hour == 0)); then
+      echo "12am"
+    else
+      echo "${hour}pm"
+    fi
+  else
+    if (($hour == 0)); then
+      if (( $acthour == 0 )); then
+        echo "12am"
+      else
+        echo "12pm"
+      fi
+    else
+      echo "${hour}am"
+    fi
+  fi
+
+}
 
 while  [[ $# -gt 0 ]]
 do
@@ -63,7 +92,9 @@ then
     NUM_NAMES=${#NAMES[@]}
     HOUR="$(date +%H)"
     ELAPSED_TIME=$(($HOUR-$START_TIME))
-    printf "%s %d - %d (%d hours)\n\n" "$(date +"%A %m/%d")" $START_TIME $HOUR $ELAPSED_TIME >> $LOG_FILE
+    HOUR=$(convertTime $HOUR)
+    START_TIME=$(convertTime $START_TIME)
+    printf "%s %s - %s (%d hours)\n\n" "$(date +"%A %m/%d")" $START_TIME $HOUR $ELAPSED_TIME >> $LOG_FILE
     PERSON_INDEX=$(($RANDOM % $NUM_NAMES))
     echo "Driver Order and Time Length:" >> $LOG_FILE
     for ((NUM=0; $NUM < $ELAPSED_TIME*2; NUM++))
@@ -71,7 +102,10 @@ then
       echo "${NAMES[$PERSON_INDEX]}, 30 Minutes" >> $LOG_FILE
       PERSON_INDEX=$(( ($PERSON_INDEX+1)%$NUM_NAMES))
     done
+
+    printf "${GREEN}Successfully updated log file${NO_COLOR}\n"
+
   else
-    printf "ERROR: %s\n" "$USAGE_STRING"
+    printf "${RED}ERROR:${NO_COLOR} %s\n" "$USAGE_STRING"
   fi
 fi
