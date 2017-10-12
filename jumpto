@@ -1,0 +1,65 @@
+#!/bin/bash
+
+DESCRIPTION_STRING="Changes directory to <directoryr> or presents list of directories to jump to"
+USAGE_STRING="Usage: jumpto <directory> [-h] [-d]"
+
+ROOT=~/
+HAS_ARGS=1
+
+RED='\033[0;31m'          # Red
+CYAN='\033[0;36m'         # Cyan
+NO_COLOR='\033[0m'        # No Color
+
+DIRECTORY=$ROOT
+
+function findDirectory() {
+  LIST=$(ls -D -R $ROOT | grep $1)
+  DIRECTORIES=()
+  for path in $LIST
+  do
+    if [[ "$path" =~ (${1}[0-9A-Za-z]*:)$ ]]; then
+      DIRECTORIES+=(${path%:})
+    fi
+  done
+
+  if [[ ${#DIRECTORIES[@]} -gt 0 ]]; then
+    for d in ${DIRECTORIES[@]}
+    do
+      echo "$d"
+    done
+  else
+    printf "${RED}%s${NO_COLOR} %s\n" "No directory found matching: " "$1"
+  fi
+
+
+}
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1 #first command line arg
+
+case $key in
+
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+HAS_ARGS=0
+shift
+break
+;;
+
+-h|-help)
+printf "%s\n" "$USAGE_STRING"
+HAS_ARGS=0
+shift
+break
+;;
+
+*)
+findDirectory $1
+break
+;;
+
+esac
+
+done
