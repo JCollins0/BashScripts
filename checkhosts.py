@@ -113,49 +113,45 @@ def get_host_by_name(hosts, name):
            return host
     return None
 
-url = URLOpener.urlopen('https://apps.cs.utexas.edu/unixlabstatus/').read()
+url = URLOpener.urlopen('https://apps.cs.utexas.edu/unixlabstatus/')
+rcode = url.getcode()
+url = url.read()
 
-PARAGRAPHSREGEX = REGEX.compile("<p>|</p>")
-PARAGRAPHS = PARAGRAPHSREGEX.split(url)
+if(rcode == 200): #Response OK
 
-#Get table of hosts
-hostsTable = PARAGRAPHS[3]
+    PARAGRAPHSREGEX = REGEX.compile("<p>|</p>")
+    PARAGRAPHS = PARAGRAPHSREGEX.split(url)
 
-TRELEMENTREGEX = REGEX.compile("<tr>|</tr>")
-TRELEMENTS = TRELEMENTREGEX.split(hostsTable)[6:]
+    #Get table of hosts
+    hostsTable = PARAGRAPHS[3]
 
-remove_extra_table_tag(TRELEMENTS)
-remove_new_lines(TRELEMENTS)
+    TRELEMENTREGEX = REGEX.compile("<tr>|</tr>")
+    TRELEMENTS = TRELEMENTREGEX.split(hostsTable)[6:]
 
-# for item in TRELEMENTS:
-#     if(item.find("</table>") or item == "\n"):
-#         TRELEMENTS.remove(item)
+    remove_extra_table_tag(TRELEMENTS)
+    remove_new_lines(TRELEMENTS)
 
 
+    hosts = []
+    finish = len(TRELEMENTS)
+    for i in range(0, finish):
+        host = Host()
+        host.addHostInfo(TRELEMENTS[i])
+        hosts.append(host)
 
-hosts = []
-finish = len(TRELEMENTS)
-for i in range(0, finish):
-    host = Host()
-    host.addHostInfo(TRELEMENTS[i])
-    hosts.append(host)
-    #print i, hosts[i]
+    hosts = sorted(hosts, cmp=host_cmp)
+    #for host in hosts:
+    #     print host
 
-hosts = sorted(hosts, cmp=host_cmp)
-#for host in hosts:
-#     print host
+    if (len(System.argv) > 1):
+        chart = Chart()
+        for i in range(1, len(System.argv)):
+            cHost = get_host_by_name(hosts, System.argv[i])
+            if (cHost != None):
+                chart.show_chart(cHost)
+    else:
+        print hosts[0].get_name()
 
-if (len(System.argv) > 1):
-    chart = Chart()
-    for i in range(1, len(System.argv)):
-        cHost = get_host_by_name(hosts, System.argv[i])
-        if (cHost != None):
-            chart.show_chart(cHost)
 else:
-    print hosts[0].get_name()
-# for data in url.split("<table width=100%% cellspacing=0>"):
-#     print data
-#     print "Separated\n" #parser.feed(data)
-# parser.close()
-
-#print parser.table
+    print "Cannot reach host"
+    exit(1)

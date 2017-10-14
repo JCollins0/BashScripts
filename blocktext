@@ -1,0 +1,207 @@
+#!/bin/bash
+
+LETTERA=("░███░" "█░░░█" "█████" "█░░░█" "█░░░█")
+LETTERB=("████░" "█░░░█" "████░" "█░░░█" "████░")
+LETTERC=("░████" "█░░░░" "█░░░░" "█░░░░" "░████")
+
+LETTERD=("████░" "█░░░█" "█░░░█" "█░░░█" "████░")
+LETTERE=("█████" "█░░░░" "█████" "█░░░░" "█████")
+LETTERF=("█████" "█░░░░" "███░░" "█░░░░" "█░░░░")
+
+LETTERG=("░████" "█░░░░" "█░░██" "█░░░█" "░███░")
+LETTERH=("█░░░█" "█░░░█" "█████" "█░░░█" "█░░░█")
+LETTERI=("█████" "░░█░░" "░░█░░" "░░█░░" "█████")
+
+LETTERJ=("█████" "░░░█░" "░░░█░" "█░░█░" "░██░░")
+LETTERK=("█░░░█" "█░░█░" "███░░" "█░░█░" "█░░░█")
+LETTERL=("█░░░░" "█░░░░" "█░░░░" "█░░░░" "█████")
+
+LETTERM=("█░░░█" "██░██" "█░█░█" "█░░░█" "█░░░█")
+LETTERN=("█░░░█" "██░░█" "█░█░█" "█░░██" "█░░░█")
+LETTERO=("░███░" "█░░░█" "█░░░█" "█░░░█" "░███░")
+
+LETTERP=("████░" "█░░░█" "████░" "█░░░░" "█░░░░")
+LETTERQ=("░███░" "█░░░█" "█░█░█" "█░░█░" "░██░█")
+LETTERR=("░███░" "█░░░█" "████░" "█░█░░" "█░░█░")
+
+LETTERS=("█████" "█░░░░" "░███░" "░░░░█" "█████")
+LETTERT=("█████" "░░█░░" "░░█░░" "░░█░░" "░░█░░")
+LETTERU=("█░░░█" "█░░░█" "█░░░█" "█░░░█" "░███░")
+
+LETTERV=("█░░░█" "█░░░█" "░█░█░" "░█░█░" "░░█░░")
+LETTERW=("█░░░█" "█░░░█" "█░░░█" "█░█░█" "░███░")
+LETTERX=("█░░░█" "░█░█░" "░░█░░" "░█░█░" "█░░░█")
+
+LETTERY=("█░░░█" "█░░░█" "░███░" "░░█░░" "░░█░░")
+LETTERZ=("█████" "░░░█░" "░░█░░" "░█░░░" "█████")
+
+LETTERSPACE=("░░░░░" "░░░░░" "░░░░░" "░░░░░" "░░░░░")
+
+LETTERLSPACE=("░" "░" "░" "░" "░")
+
+CONSOLE_LIMIT=20
+
+DESCRIPTION_STRING="Desc: print block text to console"
+USAGE_STRING="Usage: blocktext <text> [-h] [-d]"
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1 #first command line arg
+
+case $key in
+
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+shift
+break
+;;
+
+-h|-help)
+printf "%s\n" "$USAGE_STRING"
+shift
+break
+;;
+
+*)
+str+="$(echo $1 | tr '[:upper:]' '[:lower:]')"
+if [[ $# -gt 1 ]]; then
+  str+=" "
+fi
+shift
+;;
+
+esac
+
+done
+
+ # echo ${str:0:1}
+text=()
+# text=("c" "╘" "r" "╘" "d" " " "a" "╘" "b" "╘" "c")
+
+for (( i = 0; i < ${#str}; i++ )); do
+  le=${str:$i:1}
+  # echo $i $j $le
+  case $le in
+    [a-z])
+      text+=($le)
+      end=$((${#str}-1))
+      if (( $i != $end )); then
+        text+=("╘")
+      fi
+      ;;
+    ""|" ")
+      text+=(" ")
+    ;;
+  esac
+done
+
+# echo ${#text[@]}
+
+textlength=${#text[@]}
+sent=()
+declare -A word
+size=5*$textlength
+index=0
+for ((i=0;i<size;i++)) do
+    letter=${text[$index]}
+    # echo "li" $index
+    windex=$(($i/$textlength))
+    # echo "w" $windex
+    case $letter in
+      "a") word[$i]=${LETTERA[$windex]}
+      ;;
+      "b") word[$i]=${LETTERB[$windex]}
+      ;;
+      "c") word[$i]=${LETTERC[$windex]}
+      ;;
+      "d") word[$i]=${LETTERD[$windex]}
+      ;;
+      "e") word[$i]=${LETTERE[$windex]}
+      ;;
+      "f") word[$i]=${LETTERF[$windex]}
+      ;;
+      "g") word[$i]=${LETTERG[$windex]}
+      ;;
+      "h") word[$i]=${LETTERH[$windex]}
+      ;;
+      "i") word[$i]=${LETTERI[$windex]}
+      ;;
+      "j") word[$i]=${LETTERJ[$windex]}
+      ;;
+      "k") word[$i]=${LETTERK[$windex]}
+      ;;
+      "l") word[$i]=${LETTERL[$windex]}
+      ;;
+      "m") word[$i]=${LETTERM[$windex]}
+      ;;
+      "n") word[$i]=${LETTERN[$windex]}
+      ;;
+      "o") word[$i]=${LETTERO[$windex]}
+      ;;
+      "p") word[$i]=${LETTERP[$windex]}
+      ;;
+      "q") word[$i]=${LETTERQ[$windex]}
+      ;;
+      "r") word[$i]=${LETTERR[$windex]}
+      ;;
+      "s") word[$i]=${LETTERS[$windex]}
+      ;;
+      "t") word[$i]=${LETTERT[$windex]}
+      ;;
+      "u") word[$i]=${LETTERU[$windex]}
+      ;;
+      "v") word[$i]=${LETTERV[$windex]}
+      ;;
+      "w") word[$i]=${LETTERW[$windex]}
+      ;;
+      "x") word[$i]=${LETTERX[$windex]}
+      ;;
+      "y") word[$i]=${LETTERY[$windex]}
+      ;;
+      "z") word[$i]=${LETTERZ[$windex]}
+      ;;
+      "╘") word[$i]=${LETTERLSPACE[$windex]}
+      ;;
+      " ") word[$i]=${LETTERSPACE[$windex]}
+      ;;
+
+    esac
+
+
+
+    index=$(($index+1))
+    index=$(($index%$textlength))
+    #
+    # sentIndex=$(($index % $CONSOLE_LIMIT))
+    # if (( $(($index % $CONSOLE_LIMIT))== 0 )) && (($i != 0)); then
+    #   sent+=(${word[@]})
+    #   word=()
+    # fi
+    #windex is row of letter to pull from
+    #i is size of word array
+    #index is
+    # echo $index $i $windex
+
+
+done
+
+# printf "%s\n" ${sent[@]}
+# for ((j=0;j<size;j++)) do
+#     shouldnew=$(( ($j % $textlength) % $CONSOLE_LIMIT))
+#     if (( $shouldnew == 0  )); then
+#       printf "\n"
+#     fi
+#     printf "%s" ${sent[$j]}
+# done
+
+
+
+for ((j=0;j<size;j++)) do
+    shouldnew=$(($j % $textlength))
+    if (( $shouldnew == 0  )); then
+      printf "\n"
+    fi
+    printf "%s" ${word[$j]}
+done
+echo

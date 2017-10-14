@@ -8,6 +8,10 @@ DEBUG=0
 
 HOSTS=""
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NO_COLOR='\033[0m'
+
 while  [[ $# -gt 0 ]]
 do
 
@@ -39,14 +43,16 @@ esac
 done
 
 if ((DEBUG==0)); then
-
-HOST=$(python $PYTHON_FILE $HOSTS)
-
-#echo "$HOST"
-if [[ -n $HOSTS ]]; then
-  echo "$HOST"
-else
-  printf "Best Host: %s@cs.utexas.edu\n" "$HOST"
-fi
-
+  HOST=$(python $PYTHON_FILE $HOSTS)
+  exitStatus=$?
+  if (($exitStatus != 0)); then
+    printf "${RED}Error: %s${NO_COLOR}\n" "Could not connect to server"
+  else
+    
+    if [[ -n $HOSTS ]]; then
+      echo "$HOST"
+    else
+      printf "Best Host: %s@cs.utexas.edu\n" "$HOST"
+    fi
+  fi
 fi
