@@ -1,6 +1,48 @@
 import urllib as URLOpener
 import re as REGEX
+import sys as System
 
+class Chart:
+
+    NO_COLOR="\033[00m"
+    def show_chart(self, host):
+	title = host.hostName
+	aVal = int(host.load * 100)
+	spacing = 47//2-len(title)//2
+	tspacing = 45-spacing-len(title)
+	color = "\033[93m" if (aVal > 100) else "\033[32m"
+	color = "\033[31m" if host.is_down() else color
+
+	ucolor = "\033[93m" if (host.usercount > 20) else "\033[32m"
+        ucolor = "\033[31m" if host.is_down() else ucolor
+	unumToDraw= 1 if host.usercount == 0 else host.usercount+1
+	numToDraw=0
+	if (aVal > 100000):
+	    numToDraw=48
+	elif (aVal > 10000):
+	    numToDraw=38+(aVal//10000)
+	elif (aVal > 1000):
+	    numToDraw=29+(aVal//1000)
+	elif (aVal > 100):
+	    numToDraw=20+(aVal//100)
+	elif (aVal > 10):
+	    numToDraw=11+(aVal//10)
+	elif (aVal > 1):
+	    numToDraw=1+aVal
+	else:
+	    numToDraw=1
+
+	print "                                                    "
+	print "                                                   4"
+	print "     0"+" "*spacing+title+" "*tspacing+"7"
+	print "     -----------------------------------------------"
+	print "user "+ucolor+"+"*unumToDraw+self.NO_COLOR
+	print "load "+color+"+"*numToDraw+self.NO_COLOR
+	print "     -----------------------------------------------"
+	print "     0         .        1        1        1        1"
+	print "               1                 0        0        0"
+	print "                                          0        0"
+	print "                                                   0"
 
 
 class Host:
@@ -25,7 +67,7 @@ class Host:
             self.usercount=int(unparsedData[3])
             self.load=float(unparsedData[4])
         else:
-            self.load=100000000.0
+            self.load=10000
             self.uptime="0+00:00"
     def is_down(self):
         return self.status=="down"
@@ -56,10 +98,20 @@ def remove_blank_lines(l):
             l.remove(item)
 
 def host_cmp(h1,h2):
+    if(h1.is_down() and not h2.is_down()):
+	return 1
+    elif(h2.is_down() and not h1.is_down()):
+	return -1
     c = int((h1.load-h2.load)*100)
     if(c == 0):
         c = h1.usercount-h2.usercount
     return c
+
+def get_host_by_name(hosts, name):
+    for host in hosts:
+        if(host.hostName == name):
+           return host
+    return None
 
 url = URLOpener.urlopen('https://apps.cs.utexas.edu/unixlabstatus/').read()
 
@@ -90,10 +142,17 @@ for i in range(0, finish):
     #print i, hosts[i]
 
 hosts = sorted(hosts, cmp=host_cmp)
-# for host in hosts:
+#for host in hosts:
 #     print host
 
-print hosts[0].get_name()
+if (len(System.argv) > 1):
+    chart = Chart()
+    for i in range(1, len(System.argv)):
+        cHost = get_host_by_name(hosts, System.argv[i])
+        if (cHost != None):
+            chart.show_chart(cHost)
+else:
+    print hosts[0].get_name()
 # for data in url.split("<table width=100%% cellspacing=0>"):
 #     print data
 #     print "Separated\n" #parser.feed(data)

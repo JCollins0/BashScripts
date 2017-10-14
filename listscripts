@@ -49,7 +49,7 @@ then
  printf "%s\n" "|                         Custom Scripts                         |"
  printf "%s${NO_COLOR}\n" "------------------------------------------------------------------"
 
- SCRIPTS="$(ls -I *.MD -I "*.txt" $SCRIPT_DIRECTORY)" #-1 makes new line
+ SCRIPTS="$(ls -I *.MD -I "*.txt" -I "*.py" $SCRIPT_DIRECTORY)" #-1 makes new line
  for program in $SCRIPTS
  do
    printf "${GREEN}%s${NO_COLOR}\n\t%s\n\t%s\n" "·$program" "$($program -description)" "$($program -help)"
