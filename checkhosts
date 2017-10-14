@@ -1,0 +1,31 @@
+#!/bin/bash
+
+DESCRIPTION_STRING="Checks status of CS lab machines"
+USAGE_STRING="Usage: checkhosts [-h] [-d]"
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1 #first command line arg
+
+case $key in
+
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+shift
+break
+;;
+
+-h|-help)
+printf "%s\n" "$USAGE_STRING"
+shift
+break
+;;
+
+esac
+
+done
+
+HOST=$(python ~/CustomScripts/checkhosts.py)
+
+printf "Best Host: %s@cs.utexas.edu\n" $HOST

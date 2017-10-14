@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DESCRIPTION_STRING="Changes directory to <directoryr> or presents list of directories to jump to"
+DESCRIPTION_STRING="Presents list of directories to jump to"
 USAGE_STRING="Usage: jumpto <directory> [-h] [-d]"
 
 ROOT=~/
@@ -10,28 +10,18 @@ RED='\033[0;31m'          # Red
 CYAN='\033[0;36m'         # Cyan
 NO_COLOR='\033[0m'        # No Color
 
-DIRECTORY=$ROOT
-
 function findDirectory() {
-  LIST=$(ls -D -R $ROOT | grep $1)
-  DIRECTORIES=()
-  for path in $LIST
-  do
-    if [[ "$path" =~ (${1}[0-9A-Za-z]*:)$ ]]; then
-      DIRECTORIES+=(${path%:})
-    fi
-  done
+  local lowercaseP=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+  local DIRECTORIES=$(ls -D -R $ROOT | grep -i "$lowercaseP"[[:alnum:]_]*:$)
 
   if [[ ${#DIRECTORIES[@]} -gt 0 ]]; then
     for d in ${DIRECTORIES[@]}
     do
-      echo "$d"
+      echo "cd ${d%:}"
     done
   else
-    printf "${RED}%s${NO_COLOR} %s\n" "No directory found matching: " "$1"
+    printf "${RED}%s${NO_COLOR} %s\n" "No directory found: " "$1"
   fi
-
-
 }
 
 while  [[ $# -gt 0 ]]
