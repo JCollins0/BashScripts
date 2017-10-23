@@ -4,7 +4,6 @@ DESCRIPTION_STRING="Presents list of directories to jump to"
 USAGE_STRING="Usage: jumpto <directory> [-h] [-d]"
 
 ROOT=~/
-HAS_ARGS=1
 
 RED='\033[0;31m'          # Red
 CYAN='\033[0;36m'         # Cyan
@@ -15,10 +14,15 @@ function findDirectory() {
   local DIRECTORIES=$(ls -D -R $ROOT | grep -i "$lowercaseP"[[:alnum:]_]*:$)
 
   if [[ ${#DIRECTORIES[@]} -gt 0 ]]; then
-    for d in ${DIRECTORIES[@]}
-    do
-      echo "cd ${d%:}"
+    select opt in ${DIRECTORIES[@]}; do
+      di=${opt%:}
+      cd $di
+      break
     done
+    # for d in ${DIRECTORIES[@]}
+    # do
+    #   echo "cd ${d%:}"
+    # done
   else
     printf "${RED}%s${NO_COLOR} %s\n" "No directory found: " "$1"
   fi
@@ -33,16 +37,14 @@ case $key in
 
 -d|-desc|-description)
 printf "%s\n" "$DESCRIPTION_STRING"
-HAS_ARGS=0
 shift
-break
+exit
 ;;
 
 -h|-help)
 printf "%s\n" "$USAGE_STRING"
-HAS_ARGS=0
 shift
-break
+exit
 ;;
 
 *)

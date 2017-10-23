@@ -1,0 +1,51 @@
+#!/bin/bash
+
+DESCRIPTION_STRING="Desc: Take Notes!"
+USAGE_STRING="Usage: note [-list] [-add <\"Text\">] [-clear] [-help] [-desc]"
+STORAGE_DIRECTORY=~/CustomScripts/
+NOTE_FILE="${STORAGE_DIRECTORY}notes.txt"
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1 #first command line arg
+
+case $key in
+
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+shift
+exit
+;;
+
+-h|-help)
+printf "%s\n" "$USAGE_STRING"
+shift
+exit
+;;
+
+-l|list)
+touch "$NOTE_FILE"
+cat "$NOTE_FILE"
+exit
+;;
+
+-a|-add)
+touch "$NOTE_FILE"
+echo $2 >> "$NOTE_FILE"
+shift
+shift
+;;
+
+-c|-clear)
+rm "$NOTE_FILE"
+shift
+;;
+
+*)
+exit
+;;
+
+esac
+
+done

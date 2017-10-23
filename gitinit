@@ -8,8 +8,6 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NO_COLOR='\033[0m'
 
-HAS_ARGS=0
-
 # $# = number of args passed to script
 
 while  [[ $# -gt 0 ]]
@@ -26,19 +24,17 @@ shift
 ;;
 
 -d|-desc|-description)
-REPOSITORY_URL=""
 printf "%s\n" "$DESCRIPTION_STRING"
 HAS_ARGS=1
 shift
-break
+exit
 ;;
 
 -h|-help|*)
 printf "%s\n" "$USAGE_STRING"
-REPOSITORY_URL=""
 HAS_ARGS=1
 shift
-break
+exit
 ;;
 
 esac
@@ -55,8 +51,5 @@ git commit -m "Initial commit"
 git remote add origin $REPOSITORY_URL
 git push -u origin master
 printf "${GREEN}Repository successfully initialized!${NO_COLOR}\n"
-else
-  if (( $HAS_ARGS == 0 )); then
-  printf "${RED}Error: ${NO_COLOR}%s\n" "$USAGE_STRING"
-  fi
+
 fi

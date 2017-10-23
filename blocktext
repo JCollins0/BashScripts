@@ -54,13 +54,13 @@ case $key in
 -d|-desc|-description)
 printf "%s\n" "$DESCRIPTION_STRING"
 shift
-break
+exit
 ;;
 
 -h|-help)
 printf "%s\n" "$USAGE_STRING"
 shift
-break
+exit
 ;;
 
 *)
