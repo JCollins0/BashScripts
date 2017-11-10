@@ -1,0 +1,31 @@
+#!/bin/bash
+DESCRIPTION_STRING="Desc: Check files for lines containing more than 80 chars."
+USAGE_STRING="Usage: lonlines <directory|file> [-h] [-d]"
+PYTHON_FILE=~/CustomScripts/linemax.py
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1
+
+case $key in
+
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+shift
+exit
+;;
+
+-h|-help)
+printf "%s\n" "$USAGE_STRING"
+shift
+exit
+;;
+*)
+python3 "$PYTHON_FILE" $1
+shift
+;;
+
+esac
+
+done
