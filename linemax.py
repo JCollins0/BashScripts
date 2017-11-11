@@ -2,9 +2,24 @@ import sys as System
 import os
 import re
 
-regex = re.compile(".*.out$|.*.o$|.git|._.*|.*.bin$")
+regex = re.compile("^\.") #filters folder and files that are hidden
+
+def remove_hidden_files(array):
+    narray = []
+    for element in array:
+        if(not regex.match(element)):
+            narray.append(element)
+    return narray
+
+def is_binary(fileName):
+    if(os.path.isdir(fileName)):
+        return False
+    finfo=os.popen('file -bi ' + "\""+fileName+ "\"",'r').read()
+    charset = finfo.split(" ")[1].split("=")[1].strip()
+    return charset == 'binary'
 
 def checkFile(fileName):
+
     total_file_l_count = 0
     F = open(fileName, 'r')
     i = 0
@@ -19,9 +34,10 @@ def checkDirectory(directory):
     files_checked = 0
     total_file_l_count = 0
     files = os.listdir(directory)
+    files = remove_hidden_files(files)
     for fi in files:
         fileName = directory+"/"+fi
-        if(not regex.match(fi)):
+        if(not is_binary(fileName) ):
             if(not os.path.isdir(fileName)):
                 total_file_l_count = total_file_l_count + checkFile(fileName)
                 files_checked = files_checked + 1
