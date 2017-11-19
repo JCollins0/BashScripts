@@ -1,0 +1,137 @@
+#!/bin/bash
+DESCRIPTION_STRING="Desc: Russian Roulette. Are you feeling lucky?"
+USAGE_STRING="Usage: rr <num_players> [-h] [-d]"
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NO_COLOR='\033[0m'
+AUTO=0
+HAS_NAMES=0
+NAMES=()
+
+function contains() {
+  if [[ $1 == *"$2"* ]]; then
+    return 1
+  fi
+  return 0
+}
+
+function player_alive() {
+  for ((i=0; $i < $NUM_PLAYERS; i++)){
+    contains "$OUT_STRING" " $i "
+    CONTAINS=$?
+    if [[ $CONTAINS -eq 0 ]]; then
+      if [[ $HAS_NAMES -eq 1 ]]; then
+        printf "\n%s survived!\n\n" ${NAMES[$i]}
+      else
+        printf "\n%s survived!\n\n" $i
+      fi
+      return 0
+    fi
+  }
+  return 1
+}
+
+function play_round() {
+  # echo "$OUT_STRING"
+  name=$1
+  printf "%s's turn: " $name
+
+  num=$[ $RANDOM % 6 ]
+
+  if (($num == 0)); then
+    printf "${RED}BANG! dead! ${NO_COLOR}\n"
+    ALIVE_PLAYERS=$(($ALIVE_PLAYERS-1))
+    OUT_STRING="$OUT_STRING ${2} "
+  else
+    printf "click\n"
+  fi
+}
+
+
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1
+
+case $key in
+
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+shift
+exit
+;;
+
+-h|-help)
+printf "%s\n" "$USAGE_STRING"
+shift
+exit
+;;
+
+-auto)
+AUTO=1
+shift
+;;
+
+-n|-names)
+IFS=$'\n' read -d '' -r -a NAMES < "$2"
+HAS_NAMES=1
+shift
+shift
+;;
+
+*)
+NUM_PLAYERS=$1
+ALIVE_PLAYERS=$1
+shift
+;;
+
+esac
+
+done
+
+if (( "${#NAMES[@]}" > 0 )); then
+  # NAMES EXIST
+  NUM_PLAYERS="${#NAMES[@]}"
+  ALIVE_PLAYERS="${#NAMES[@]}"
+fi
+
+echo ""
+if [[ "$NUM_PLAYERS" -eq 1 ]];
+then
+  echo "Find someone to play with"
+  exit
+fi
+
+if (( "${#NAMES[@]}" > 0 )); then
+  printf "%s is playing\n" "${NAMES[@]}"
+  printf "\n"
+fi
+
+echo "PRESS ENTER TO START"
+
+OUT_STRING=" "
+PERSON_INDEX=$(($RANDOM % $NUM_PLAYERS))
+while [[ $ALIVE_PLAYERS -gt 1 ]]; do
+  if [[ $AUTO -eq 0 ]]; then
+    read enter
+  fi
+
+  contains "$OUT_STRING" " $PERSON_INDEX "
+  CONTAINS=$?
+  while [[ $CONTAINS -eq 1 ]]; do
+    PERSON_INDEX=$(( ($PERSON_INDEX+1)%$NUM_PLAYERS))
+    contains "$OUT_STRING" " ${PERSON_INDEX} "
+    CONTAINS=$?
+  done
+  if [[ $HAS_NAMES -eq 1 ]]; then
+    play_round "${NAMES[$PERSON_INDEX]}" "$PERSON_INDEX"
+    PERSON_INDEX=$(( ($PERSON_INDEX+1)%${#NAMES[@]}))
+  else
+      play_round "$PERSON_INDEX" "$PERSON_INDEX"
+      PERSON_INDEX=$(( ($PERSON_INDEX+1)%$NUM_PLAYERS))
+  fi
+
+
+done
+player_alive
