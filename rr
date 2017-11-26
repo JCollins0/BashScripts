@@ -1,6 +1,6 @@
 #!/bin/bash
 DESCRIPTION_STRING="Desc: Russian Roulette. Are you feeling lucky?"
-USAGE_STRING="Usage: rr <num_players> [-h] [-d]"
+USAGE_STRING="Usage: rr <num_players> [-auto] [-n <names.txt>] [-h] [-d]"
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NO_COLOR='\033[0m'

@@ -1,0 +1,38 @@
+#!/bin/bash
+#Author Ivan Radakovic
+DESCRIPTION_STRING="List size of files & directories in current directory"
+USAGE_STRING="Usage: dirsize [-h] [-d]"
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1 #first command line arg
+
+case $key in
+
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+shift
+exit
+;;
+
+-h|-help)
+printf "%s\n" "$USAGE_STRING"
+shift
+exit
+;;
+
+esac
+
+done
+
+function get_size() {
+  for d in *; do
+   du -sh $d
+  done
+  for d in .*; do
+   du -sh $d --exclude=".."
+  done
+}
+
+get_size | sort -h

@@ -1,0 +1,34 @@
+#!/bin/bash
+#Author Ivan Radakovic
+DESCRIPTION_STRING="Share files between users ~/share/ folders"
+USAGE_STRING="Usage: share <abs. file path> [-h] [-d]"
+dest_usr=ivanr
+
+while  [[ $# -gt 0 ]]
+do
+
+key=$1 #first command line arg
+
+case $key in
+
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+shift
+exit
+;;
+
+-h|-help)
+printf "%s\n" "$USAGE_STRING"
+shift
+exit
+;;
+
+esac
+
+done
+
+
+cp $1 /u/$dest_usr/share
+if [[ $? == 0 ]]; then
+  chmod 777 /u/$dest_usr/share/${1##*/}
+fi
