@@ -1,7 +1,7 @@
 #!/bin/bash
-DESCRIPTION_STRING="Desc: Check files for lines containing more than 80 chars."
-USAGE_STRING="Usage: longlines <directory|file> [-h] [-d]"
-PYTHON_FILE=~/CustomScripts/longlines.py
+DESCRIPTION_STRING="Desc: Print number of lines in a file"
+USAGE_STRING="Usage: filelines <directory|file> [-h] [-d]"
+PYTHON_FILE=~/CustomScripts/filelines.py
 
 while  [[ $# -gt 0 ]]
 do
@@ -22,7 +22,7 @@ shift
 exit
 ;;
 *)
-python3 "$PYTHON_FILE" $1
+python3 "$PYTHON_FILE" $1 | sort -h
 shift
 ;;
 

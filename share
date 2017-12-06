@@ -23,12 +23,14 @@ shift
 exit
 ;;
 
-esac
-
-done
-
-
+*)
 cp $1 /u/$dest_usr/share
 if [[ $? == 0 ]]; then
   chmod 777 /u/$dest_usr/share/${1##*/}
 fi
+shift
+exit
+;;
+
+esac
+done

@@ -24,10 +24,9 @@ def checkFile(fileName):
     F = open(fileName, 'r')
     i = 0
     for line in F:
-        if(len(line) > 80):
-            print(fileName + " line", str(i+1))
-            total_file_l_count = total_file_l_count +1
-        i = i+1
+        total_file_l_count = total_file_l_count + 1
+        i=i+1
+    print(i+1, fileName)
     return total_file_l_count
 
 def checkDirectory(directory):
@@ -60,5 +59,4 @@ if(len(System.argv) > 1):
         total_file_line_count = checkFile(fileName)
         files_checked = 1
     print()
-    print("checked",str(files_checked),
-     "file(s). Found",str(total_file_line_count),"line(s) > 80.\n")
+    print("checked",str(files_checked),"file(s).")
