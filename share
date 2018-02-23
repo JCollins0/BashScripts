@@ -1,7 +1,7 @@
 #!/bin/bash
 #Author Ivan Radakovic
 DESCRIPTION_STRING="Share files between users ~/share/ folders"
-USAGE_STRING="Usage: share <abs. file path> [-h] [-d]"
+USAGE_STRING="Usage: share <abs. file path> -u <user> [-h] [-d]"
 dest_usr=ivanr
 
 while  [[ $# -gt 0 ]]
@@ -23,10 +23,20 @@ shift
 exit
 ;;
 
+-u)
+dest_usr=$2
+shift
+shift
+;;
+
 *)
 cp $1 /u/$dest_usr/share
 if [[ $? == 0 ]]; then
-  chmod 777 /u/$dest_usr/share/${1##*/}
+  file=${1##*/}
+  chmod 777 /u/$dest_usr/share/$file
+  if [[ $? == 0 ]]; then
+    printf "Successfully shared file: %s\n"  "$file"
+  fi
 fi
 shift
 exit

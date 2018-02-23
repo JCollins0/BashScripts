@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DESCRIPTION_STRING="Desc: Update programming log"
-USAGE_STRING="Usage: proglog -f <file> -s <start time (24hr)> -n <names.txt> [-h] [-d]"
+USAGE_STRING="Usage: proglog -f <file> -s <start time (24hr)> -e <end time (24hr)> -n <names.txt> [-h] [-d]"
 
 NAMES_FILE=""
 START_TIME=0
@@ -58,6 +58,12 @@ shift
 shift
 ;;
 
+-e|-finish)
+END_TIME=$2
+shift
+shift
+;;
+
 -n|-names)
 NAMES_FILE=$2
 shift
@@ -87,7 +93,12 @@ then
   counter=0
   IFS=$'\n' read -d '' -r -a NAMES < "$NAMES_FILE"
   NUM_NAMES=${#NAMES[@]}
-  HOUR="$(date +%H)"
+  if [[ -z "$END_TIME" ]]; then
+    HOUR="$(date +%H)"
+  else
+    HOUR=$END_TIME
+  fi
+
   ELAPSED_TIME=$(($HOUR-$START_TIME))
   HOUR=$(convertTime $HOUR)
   START_TIME=$(convertTime $START_TIME)

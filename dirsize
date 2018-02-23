@@ -22,6 +22,10 @@ shift
 exit
 ;;
 
+*)
+shift
+;;
+
 esac
 
 done

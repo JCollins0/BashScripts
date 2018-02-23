@@ -44,11 +44,12 @@ done
 if [ -n "$REPOSITORY_URL" ] #if repo_url not null
 then
 git init
+git remote add origin $REPOSITORY_URL
+git pull origin master
 touch .gitignore
 printf "%s\n\%s\n%s\n" "._.DS_Store" ".DS_Store" ".nfs*" > .gitignore
 git add -A
 git commit -m "Initial commit"
-git remote add origin $REPOSITORY_URL
 git push -u origin master
 printf "${GREEN}Repository successfully initialized!${NO_COLOR}\n"
 
