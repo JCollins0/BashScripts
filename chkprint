@@ -1,0 +1,102 @@
+#!/bin/bash
+
+#GLOBALS
+USER_NAME=colljona #username to look for
+PRINTERS=('lw303' 'lw301' 'lw27') #printer names
+
+DESCRIPTION_STRING="Desc: shows documents printed by <user_name> on listed printers"
+USAGE_STRING="Usage: chkprint [-h] [-d]"
+
+#FUNCTIONS
+function remove_null_from_results() {
+  RES=() #declare temp array
+  for str in "${RESULTS[@]}"; do #iterate through original array
+    str=$(echo "$str" | sed '$ s/\s+/ /g')
+    #^ global replace multiple-spaces with one single space
+    if [[ "$str" != " " ]] &&
+       [[ "$str" != "" ]] &&
+       [[ "$str" != " -- " ]] #as long as string has stuff
+    then
+      str=$(echo "$str" | sed '$ s/\s/_/g' | sed '$ s/^_//g')
+      #^ global replace space with underscore
+      RES+=("$str") #append to array
+    fi
+  done
+  RESULTS=("${RES[@]}") #copy array into original results
+}
+
+function display_chart() {
+  RESULTS="$1"
+  printf "|----------------------------------------------------------------------------|\n"
+  printf "|%17s %14s %-43s|\n" " " "Printer:" "${PRINTERS[$i]}"
+  printf "|----------------------------------------------------------------------------|\n"
+  printf "|%-10s | %-5s | %-8s | %-13s %-29s|\n" "User Name" "Job Id" "Position" " " "File Name"
+  printf "|----------------------------------------------------------------------------|\n"
+  for (( j = 0; j < ${#RESULTS[@]}; j+=2 )); do
+    str="${RESULTS[$j]}"
+    str2="${RESULTS[$(($j+1))]}"
+    job_id=$(echo "$str" | grep -o "[0-9]\{3\}")
+    pos_in_queue=$(echo "$str" | grep -o "active\|[0-9]\+[a-z]\{2\}_")
+    file_name=$(echo "$str2" | sed -E '$ s/_+/_/g' | grep -Po "^.*(?=_[0-9]+_bytes)" | cut -c1-40)"..."
+    bytes=$(echo "$str2" | grep -o "[0-9]\+_bytes")
+    printf "|%-12s %-8s %-10s %-43s|\n" "$USER_NAME" "$job_id" "${pos_in_queue%_}" "$file_name"
+  done
+  printf "|----------------------------------------------------------------------------|\n"
+}
+
+# COMMAND LINE ARGS
+
+while  [[ $# -gt 0 ]]
+do
+key=$1
+case $key in
+-d|-desc|-description)
+printf "%s\n" "$DESCRIPTION_STRING"
+shift
+exit
+;;
+
+-h|-help)
+printf "%s\n" "$USAGE_STRING"
+shift
+exit
+;;
+
+*)
+shift
+;;
+esac
+done
+
+#SCRIPT LOGIC
+
+for (( i = 0; i < ${#PRINTERS[@]}; i++ )); do #for every printer
+   STR=$(lpq -P${PRINTERS[$i]} | sed '$ ! s/.*/"&"/; $ s/.*/"&"/' | grep -o ".*$USER_NAME.*")
+   # surrounds lines in quotes
+
+   # STR=$(cat $1 | sed 's/"//g' | sed '$ ! s/.*/"&"/; $ s/.*/"&"/' | grep -A 1 ".*$USER_NAME.*")
+   # testing with file
+
+   RESULTS=()
+
+   IFS='""' read -a RESULTS <<< ""$STR"" #read output into array delimited by ""
+
+   remove_null_from_results
+
+   if [[ ${#RESULTS[@]} -gt 0 ]]; then
+     display_chart "${RESULTS[@]}"
+     printf "\n"
+   fi
+done
+
+echo "Num printers checked:" ${#PRINTERS[@]}
+
+# FILTERS USED
+
+# grep "$USER_NAME"                    # filters job by user name
+# lpq -Pall -a                         # gets queues for all printers
+# grep -o "[0-9]\{3\}"                 # matches job id
+# grep -o 'active\|[0-9]\+[a-z]\{2\} ' # matches position in queue (active,1st,2nd,3rd...)
+# grep -o '^[a-z0-9]\+[^:] '           # matches printer name (lw19, lw303)
+# grep -o '[0-9]+_bytes'               # matches <number of bytes>_bytes
+# grep -o '^.*(?=_[0-9]+_bytes)'       # matches name of file
